@@ -87,6 +87,25 @@ def send_mail(emails, mailer_cfg):
         print("Send email to '%s'." % mail['to'])
 
 
+def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=False):
+    parsed_mail = parse_mailouts(mailouts)
+
+    if dry_run:
+        if interactive:
+            print("%s emails will be sent." % len(parsed_mail))
+        return len(parsed_mail)
+
+    if interactive and not skip_confirm:
+        x = input("%s emails will be sent. Do you want to continue [y/N]? "
+            % len(parsed_mail))
+        if x.lower() != "y":
+            print("Aborted.")
+            return 0
+    
+    send_mail(parsed_mail, parse_mailer_config(config))
+    return len(parsed_mail)
+
+
 if __name__ == "__main__":
     import sys
     import argparse
@@ -100,17 +119,7 @@ if __name__ == "__main__":
         '-y', '--skip-confirm', action="store_true", 
         help="Do not ask for confirmation")
     p.add_argument('mailouts', nargs='+', help="Mailout names")
+    
     args = p.parse_args()
+    merge(interactive=True, **vars(args))
 
-    parsed_mail = parse_mailouts(args.mailouts)
-
-    if args.dry_run:
-        print("%s emails will be sent." % len(parsed_mail))
-        sys.exit()
-    if not args.skip_confirm:
-        x = input("%s emails will be sent. Do you want to continue [y/N]? "
-		    % len(parsed_mail))
-        if x.lower() != "y":
-            print("Aborted.")
-            sys.exit()
-    send_mail(parsed_mail, parse_mailer_config(args.config))
