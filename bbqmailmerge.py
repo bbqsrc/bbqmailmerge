@@ -92,10 +92,13 @@ if __name__ == "__main__":
     import argparse
     p = argparse.ArgumentParser(
         description='Merge some mail.',
-                    epilog='Files must have a matching .txt and .json in the same directory to work successfully.')
+        epilog='Files must have a matching .txt and .json in the same directory to work successfully.')
     p.add_argument(
         '-d', '--dry-run', action='store_true', help='Emulate a mailout')
     p.add_argument('-c', '--config', help='Mailer config')
+    p.add_argument(
+        '-y', '--skip-confirm', action="store_true", 
+        help="Do not ask for confirmation")
     p.add_argument('mailouts', nargs='+', help="Mailout names")
     args = p.parse_args()
 
@@ -104,4 +107,10 @@ if __name__ == "__main__":
     if args.dry_run:
         print("%s emails will be sent." % len(parsed_mail))
         sys.exit()
+    if not args.skip_confirm:
+        x = input("%s emails will be sent. Do you want to continue [y/N]? "
+		    % len(parsed_mail))
+        if x.lower() != "y":
+            print("Aborted.")
+            sys.exit()
     send_mail(parsed_mail, parse_mailer_config(args.config))
