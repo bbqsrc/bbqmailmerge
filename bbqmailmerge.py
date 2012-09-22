@@ -1,10 +1,3 @@
-# Get a csv with the relevant columns in it
-# - First row must contain the column names for the mail merge
-# - Email field must exist
-# Build a queue of the rows ready to be sent
-# Pop da queue
-# Send da mail and has the output
-
 import csv
 import json
 from mako.template import Template
