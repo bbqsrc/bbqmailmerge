@@ -97,11 +97,11 @@ def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=
 
     if interactive and not skip_confirm:
         x = input("%s emails will be sent. Do you want to continue [y/N]? "
-            % len(parsed_mail))
+                  % len(parsed_mail))
         if x.lower() != "y":
             print("Aborted.")
             return 0
-    
+
     send_mail(parsed_mail, parse_mailer_config(config))
     return len(parsed_mail)
 
@@ -116,10 +116,9 @@ if __name__ == "__main__":
         '-d', '--dry-run', action='store_true', help='Emulate a mailout')
     p.add_argument('-c', '--config', help='Mailer config')
     p.add_argument(
-        '-y', '--skip-confirm', action="store_true", 
+        '-y', '--skip-confirm', action="store_true",
         help="Do not ask for confirmation")
     p.add_argument('mailouts', nargs='+', help="Mailout names")
-    
+
     args = p.parse_args()
     merge(interactive=True, **vars(args))
-
