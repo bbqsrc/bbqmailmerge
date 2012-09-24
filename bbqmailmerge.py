@@ -77,7 +77,7 @@ def send_mail(emails, mailer_cfg):
     mailer = Mailer(
         mailer_cfg['mail_host'],
         user=mailer_cfg['mail_user'],
-        passwd=mailer_config['mail_pass']
+        passwd=mailer_cfg['mail_pass']
     )
     mailer.connect()
 
