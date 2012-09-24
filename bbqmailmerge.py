@@ -113,7 +113,7 @@ def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=
             print("Aborted.")
             return 0
 
-    send_mail(parsed_mail, parse_mailer_config(config))
+    send_mail(parsed_mail, parse_mailer_config(config), interactive)
     return len(parsed_mail)
 
 
