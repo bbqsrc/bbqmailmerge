@@ -81,10 +81,10 @@ def send_mail(emails, mailer_cfg):
     )
     mailer.connect()
 
-	c = 0
-	elen = len(emails)
+    c = 0
+    elen = len(emails)
     for mail in emails:
-		c += 1
+        c += 1
         mailer.send_email(**mail)
         print("[%s/%s] Sent email to '%s'." % (c, elen, mail['to']))
 
