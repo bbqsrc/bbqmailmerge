@@ -94,7 +94,7 @@ def send_mail(emails, mailer_cfg, interactive=False):
     if interactive:
         end_time = time.time()
         diff = end_time - start_time
-        mps = diff / elen
+        mps = elen / diff
         print("Mailing took %.2f seconds. %.2f mails per second." % (diff, mps))
 
 
