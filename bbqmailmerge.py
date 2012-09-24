@@ -25,13 +25,12 @@ def parse_mailer_config(cfg_fn):
         cfg = {}
     else:
         cfg = json.load(open(cfg_fn))
-
     if 'mail_host' not in cfg:
         cfg['mail_host'] = "localhost"
     if 'mail_user' not in cfg:
-        cfg['mail_user'] = ''
+        cfg['mail_user'] = None 
     if 'mail_pass' not in cfg:
-        cfg['mail_pass'] = ''
+        cfg['mail_pass'] = None
 
     return cfg
 
@@ -82,9 +81,12 @@ def send_mail(emails, mailer_cfg):
     )
     mailer.connect()
 
+	c = 0
+	elen = len(emails)
     for mail in emails:
+		c += 1
         mailer.send_email(**mail)
-        print("Send email to '%s'." % mail['to'])
+        print("[%s/%s] Sent email to '%s'." % (c, elen, mail['to']))
 
 
 def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=False):
