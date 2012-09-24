@@ -1,5 +1,6 @@
 import csv
 import json
+import time
 from mako.template import Template
 from bbqutils.email import Mailer
 
@@ -73,7 +74,7 @@ def parse_mailouts(mailouts):
     return mails
 
 
-def send_mail(emails, mailer_cfg):
+def send_mail(emails, mailer_cfg, interactive=False):
     mailer = Mailer(
         mailer_cfg['mail_host'],
         user=mailer_cfg['mail_user'],
@@ -82,11 +83,19 @@ def send_mail(emails, mailer_cfg):
     mailer.connect()
 
     c = 0
+    start_time = time.time()
     elen = len(emails)
     for mail in emails:
-        c += 1
         mailer.send_email(**mail)
-        print("[%s/%s] Sent email to '%s'." % (c, elen, mail['to']))
+        if interactive:
+            c += 1
+            print("[%s/%s] Sent email to '%s'." % (c, elen, mail['to']))
+    
+    if interactive:
+        end_time = time.time()
+        diff = end_time - start_time
+        mps = diff / elen
+        print("Mailing took %.2f seconds. %.2f mails per second." % (diff, mps))
 
 
 def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=False):
