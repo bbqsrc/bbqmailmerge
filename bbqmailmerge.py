@@ -86,9 +86,15 @@ def send_mail(emails, mailer_cfg, wait=None, interactive=False):
     start_time = time.time()
     elen = len(emails)
     for mail in emails:
-        mailer.send_email(**mail)
+        c += 1
+        try:
+            mailer.send_email(**mail)
+        except Exception as e:
+            print(e)
+            print("[%s/%s] Exception for '%s'." % (c, elen, mail['to']))
+            continue
+        
         if interactive:
-            c += 1
             print("[%s/%s] Sent email to '%s'." % (c, elen, mail['to']))
         if wait:
             time.sleep(wait)
