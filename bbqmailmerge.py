@@ -121,6 +121,23 @@ def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=
     return len(parsed_mail)
 
 
+def test(mailouts, **kwargs):
+    from collections import Counter
+    c = Counter()
+
+    for mailout in mailouts:
+        rows = parse_csv(mailout)
+        for n, row in enumerate(rows):
+            email = row.get('email', None)
+            if email is None:
+                print("Line %s: email field is missing" % n)
+            elif email.strip() is "":
+                print("Line %s: email is blank" % n)
+            else:
+                c[email] += 1
+                if c[email] > 1:
+                    print("Line %s: duplicate email '%s'" % (n, email))
+
 if __name__ == "__main__":
     import sys
     import argparse
@@ -133,9 +150,14 @@ if __name__ == "__main__":
     p.add_argument('-w', '--wait', type=float,
         help='Delay between mail sending (Default: none)')
     p.add_argument(
+        '-t', '--test', action='store_true', help='Verify CSV')
+    p.add_argument(
         '-y', '--skip-confirm', action="store_true",
         help="Do not ask for confirmation")
     p.add_argument('mailouts', nargs='+', help="Mailout names")
 
     args = p.parse_args()
-    merge(interactive=True, **vars(args))
+    if args.test:
+        test(interactive=True, **vars(args))
+    else:
+        merge(interactive=True, **vars(args))
