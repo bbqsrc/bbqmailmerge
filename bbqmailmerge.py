@@ -108,7 +108,7 @@ def send_mail(emails, mailer_cfg, wait=None, interactive=False):
     mailer.disconnect()
 
 
-def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=False, wait=None):
+def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=False, wait=None, test=None):
     parsed_mail = parse_mailouts(mailouts)
 
     if dry_run:
