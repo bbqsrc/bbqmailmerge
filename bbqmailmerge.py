@@ -74,7 +74,7 @@ def parse_mailouts(mailouts):
     return mails
 
 
-def send_mail(emails, mailer_cfg, interactive=False):
+def send_mail(emails, mailer_cfg, wait=None, interactive=False):
     mailer = Mailer(
         mailer_cfg['mail_host'],
         user=mailer_cfg['mail_user'],
@@ -90,15 +90,19 @@ def send_mail(emails, mailer_cfg, interactive=False):
         if interactive:
             c += 1
             print("[%s/%s] Sent email to '%s'." % (c, elen, mail['to']))
+        if wait:
+            time.sleep(wait)
     
     if interactive:
         end_time = time.time()
         diff = end_time - start_time
         mps = elen / diff
         print("Mailing took %.2f seconds. %.2f mails per second." % (diff, mps))
+    
+    mailer.disconnect()
 
 
-def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=False):
+def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=False, wait=None):
     parsed_mail = parse_mailouts(mailouts)
 
     if dry_run:
@@ -113,7 +117,7 @@ def merge(mailouts, config=None, dry_run=False, interactive=False, skip_confirm=
             print("Aborted.")
             return 0
 
-    send_mail(parsed_mail, parse_mailer_config(config), interactive)
+    send_mail(parsed_mail, parse_mailer_config(config), wait, interactive)
     return len(parsed_mail)
 
 
@@ -126,6 +130,8 @@ if __name__ == "__main__":
     p.add_argument(
         '-d', '--dry-run', action='store_true', help='Emulate a mailout')
     p.add_argument('-c', '--config', help='Mailer config')
+    p.add_argument('-w', '--wait', type=float,
+        help='Delay between mail sending (Default: none)')
     p.add_argument(
         '-y', '--skip-confirm', action="store_true",
         help="Do not ask for confirmation")
